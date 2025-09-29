@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-12 text-center page-header">
+        <h1>{{ vm.pageHeader.title }}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info text-center" ng-if="vm.message">{{ vm.message }}</div>
+
+        <div class="row" ng-if="!vm.message">
+
+            <div class="col-sm-4">
+                <div class="panel panel-primary text-center">
+                    <div class="panel-heading">Total Users</div>
+                    <div class="panel-body">
+                        <h2>{{ vm.stats.users }}</h2>
+                        <span class="glyphicon glyphicon-user" style="font-size: 40px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="panel panel-success text-center">
+                    <div class="panel-heading">Total Content (News/Reviews)</div>
+                    <div class="panel-body">
+                        <h2>{{ vm.stats.content }}</h2>
+                        <span class="glyphicon glyphicon-file" style="font-size: 40px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="panel panel-info text-center">
+                    <div class="panel-heading">Total Reviews</div>
+                    <div class="panel-body">
+                        <h2>{{ vm.stats.reviews }}</h2>
+                        <span class="glyphicon glyphicon-star" style="font-size: 40px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

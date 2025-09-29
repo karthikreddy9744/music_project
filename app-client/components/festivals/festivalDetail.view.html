@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-12 text-center page-header">
+        <h1>{{ vm.pageHeader.title }}</h1>
+        <div ng-if="vm.isAdmin">
+            <a href="/festivals/{{ vm.festivalid }}/edit" class="btn btn-warning">
+                <span class="glyphicon glyphicon-pencil"></span> Edit Festival
+            </a>
+            <button class="btn btn-danger" ng-click="vm.deleteFestival()">
+                <span class="glyphicon glyphicon-trash"></span> Delete Festival
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-if="!vm.festival">
+    <div class="col-12">
+        <div class="alert alert-info">{{ vm.message }}</div>
+    </div>
+</div>
+
+<div class="row" ng-if="vm.festival">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-primary">Description</h3>
+            </div>
+            <div class="panel-body">
+                <p>{{ vm.festival.description || 'No description provided.' }}</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-primary">Review Tracks</h3>
+            </div>
+            <div class="panel-body">
+                <p>The backend separation of reviews from festivals means the frontend must integrate them here manually
+                    or link to a separate reviews section.</p>
+                <a href="/reviews/add" class="btn btn-success">Post a Review for this Genre/Music</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title text-primary">Location & Dates</h3>
+            </div>
+            <div class="panel-body">
+                <p>
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    **Dates:** {{ vm.festival.startDate | date:'fullDate' }} - {{ vm.festival.endDate | date:'fullDate'
+                    }}
+                </p>
+                <p class="address">
+                    <span class="glyphicon glyphicon-map-marker"></span>
+                    **Address:** {{ vm.festival.address }}
+                </p>
+
+                <p class="text-muted small">
+                    Latitude: {{ vm.festival.location.latitude | number: 6 }} <br>
+                    Longitude: {{ vm.festival.location.longitude | number: 6 }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

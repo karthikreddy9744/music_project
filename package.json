@@ -1,14 +1,14 @@
 {
-  "name": "loc8r",
+  "name": "music_hub",
   "version": "1.0.0",
-  "description": "Loc8r - MEAN stack location finder web application",
+  "description": "An application to manage and share music events and reviews.",
   "main": "app.js",
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "NODE_ENV=test nodemon ./bin/www",
     "seed": "node seed.js",
-    "build-client": "terser app_client/app.js app_client/services/*.js app_client/directives/*.js app_client/controllers/*.js -o public/javascripts/loc8r.min.js --compress --mangle",
+    "build-client": "terser app-client/app.js app-client/common/services/*.js app-client/common/directives/*.js app-client/components/auth/*.js app-client/components/home/*.js app-client/components/admin/*.js app-client/components/festivals/*.js app-client/components/news/*.js app-client/components/reviews/*.js app-client/components/shared/*.js -o public/javascripts/music_hub.min.js --compress --mangle",
     "build-css": "sass public/stylesheets/style.scss public/stylesheets/style.css",
     "watch-css": "sass --watch public/stylesheets/style.scss:public/stylesheets/style.css",
     "build": "npm run build-client && npm run build-css",

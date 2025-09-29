@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="page-header">
+            <h1>{{ vm.pageHeader.title }}</h1>
+        </div>
+        <div class="well">
+            <p class="text-muted">
+                Posted by <strong>{{ vm.article.authorId.name || 'Unknown' }}</strong>
+                on {{ vm.article.createdAt | date:'fullDate' }}
+            </p>
+
+            <p>{{ vm.article.body }}</p>
+
+            <div ng-if="vm.isAdmin" style="margin-top: 20px;">
+                <a href="/news/{{ vm.newsid }}/edit" class="btn btn-warning">Edit Article</a>
+            </div>
+        </div>
+    </div>
+</div>

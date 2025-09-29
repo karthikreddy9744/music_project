@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-12 text-center page-header">
+        <h1>{{ vm.pageHeader.title }}</h1>
+        <p class="lead">Check out the upcoming festivals.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info text-center" ng-if="vm.message">{{ vm.message }}</div>
+
+        <div class="list-group">
+            <a ng-repeat="festival in vm.festivals" href="/festivals/{{ festival._id }}"
+                class="list-group-item list-group-item-action mb-3 panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-8">
+                            <h4 class="list-group-item-heading text-primary">{{ festival.name }}</h4>
+                            <p class="list-group-item-text">{{ festival.description || 'No description provided.' }}</p>
+                            <p class="list-group-item-text address">
+                                <span class="glyphicon glyphicon-map-marker"></span> {{ festival.address }}
+                            </p>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 text-right">
+                            <small class="text-muted">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                {{ festival.startDate | date:'mediumDate' }} - {{ festival.endDate | date:'mediumDate'
+                                }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
