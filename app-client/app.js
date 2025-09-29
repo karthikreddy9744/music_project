@@ -4,6 +4,8 @@
   'use strict';
 
   angular.module('musicProjectApp', ['ngRoute'])
+    
+    .constant('API_BASE', 'http://localhost:3000/api')
     .config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
       
       $locationProvider.html5Mode(true).hashPrefix('');
