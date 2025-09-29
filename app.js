@@ -1,13 +1,13 @@
 //music-project/server/app.js
+// app.js (Located in Project Root)
 require('dotenv').config();
-require('./server/config/db');
+require('./server/config/db'); // Path correct relative to root
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const rateLimit = require('express-rate-limit');
-const path = require('path'); // <-- ADD THIS
+const path = require('path'); // <-- CRUCIAL ADDITION
 
 const authRoutes = require('./server/routes/authRoutes');
 const userRoutes = require('./server/routes/userRoutes');
@@ -18,21 +18,14 @@ const adminRoutes = require('./server/routes/adminRoutes');
 
 const app = express();
 
-//app.use(cors({ origin: true, credentials: true }));
+// Middleware
+// app.use(cors({ origin: true, credentials: true })); 
 app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-//static assets
-app.use(express.static(path.join(__dirname, 'public'))); 
-app.use(express.static(path.join(__dirname, 'app-client')));
-
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store'); // disable caching
-  next();
-});
-
+// 1. API Route Definitions
 app.use('/api/health', (req, res) => {
   res.json({ ok: true });
 });
@@ -44,13 +37,29 @@ app.use('/api/festivals', festivalsRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.use((req, res) => res.status(404).json({ message: 'Not found' }));
+// =========================================================================
+// 2. FRONTEND ROUTING FIX (Corrected for Root app.js location)
+// =========================================================================
 
+// Serve static assets from the 'public' folder (CSS, jQuery, minified JS bundle)
+// Path: [Project_Root]/public
+app.use(express.static(path.join(__dirname, 'public'))); 
 
+// Serve the Angular files from 'app-client' (index.html, views, individual scripts)
+// Path: [Project_Root]/app-client
+app.use(express.static(path.join(__dirname, 'app-client')));
+
+// Catch-all route to serve index.html for all non-API URLs (Angular Routing)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app-client', 'index.html'));
 });
 
+// =========================================================================
 
+const PORT = process.env.PORT || 3000;
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({ message: err.message || 'Server error' });
+});
 
 module.exports = app;

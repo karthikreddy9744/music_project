@@ -7,8 +7,8 @@
     <title>Music Project - MEAN Stack (AngularJS 1)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../public/bootstrap/css/amelia.bootstrap.css">
-    <link rel="stylesheet" href="../public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 
 </head>
@@ -19,25 +19,29 @@
     <div class="container main-content">
         <div ng-view></div>
     </div>
-
-    <script src="../public/javascripts/jquery-1.11.1.min.js"></script>
-    <script src="../public/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
+    <script src="/socket.io/socket.io.js"></script>
     <script src="app.js"></script>
-
+    
     <script src="common/services/auth.service.js"></script>
     <script src="common/services/admin.service.js"></script>
     <script src="common/services/festivals.service.js"></script>
     <script src="common/services/reviews.news.service.js"></script>
     <script src="common/services/user.service.js"></script>
-
+    
     <script src="common/directives/navigation.directive.js"></script>
-    <script src="../public/javascripts/music_hub.min.js"></script>
-
+    <script src="common/directives/starRating.directive.js"></script>
+    <script src="common/directives/leafletMap.directive.js"></script>
+    
+    <script src="components/shared/navigation.controller.js"></script>
+    <script src="components/home/home.controller.js"></script>
+    <script src="components/auth/login.controller.js"></script>
+    <script src="components/auth/register.controller.js"></script>
+    <script src="components/festivals/festivalDetail.controller.js"></script>
+    <script src="components/festivals/festivalForm.controller.js"></script>
+    <script src="components/reviews/reviewForm.controller.js"></script>
 </body>
-
 </html>
