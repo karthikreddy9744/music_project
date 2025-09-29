@@ -24,6 +24,15 @@ app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
+//static assets
+app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'app-client')));
+
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store'); // disable caching
+  next();
+});
+
 app.use('/api/health', (req, res) => {
   res.json({ ok: true });
 });
@@ -37,17 +46,7 @@ app.use('/api/admin', adminRoutes);
 
 app.use((req, res) => res.status(404).json({ message: 'Not found' }));
 
-// 2. STATIC FILE AND ANGULAR CATCHALL ROUTING (The Fix)
-// =========================================================================
 
-// Serve static assets from the main public folder (CSS, Bootstrap, jQuery, bundled JS)
-app.use(express.static(path.join(__dirname, 'public'))); 
-
-// Serve the Angular app-client folder (for index.html and view files)
-app.use(express.static(path.join(__dirname, 'app-client')));
-
-// Catch-all route to serve the Angular index.html for all non-API requests.
-// This allows Angular's ngRoute to handle deep links (like /login or /festivals/123).
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app-client', 'index.html'));
 });
