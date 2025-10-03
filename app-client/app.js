@@ -3,8 +3,8 @@
   'use strict';
   // Add 'angular.filter' for the groupBy filter in the admin dashboard
   angular.module('musicProjectApp', ['ngRoute', 'chart.js', 'angular.filter'])
-    
-    .value('API_BASE', 'http://localhost:3000/api')
+
+    .value('API_BASE', '/api')
     .config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
       
       $locationProvider.html5Mode(true).hashPrefix('');
@@ -27,6 +27,14 @@
           return true;
       }];
 
+      const redirectIfAuth = ['authService', '$location', function(authService, $location) {
+          if (authService.isAuthenticated()) {
+              $location.path('/'); // Redirect to home if already logged in
+              return false;
+          }
+          return true;
+      }];
+
       // Route Configuration
       $routeProvider
         .when('/', {
@@ -38,12 +46,14 @@
         .when('/login', {
           templateUrl: 'components/auth/login.view.html',
           controller: 'loginCtrl',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
+          resolve: { authCheck: redirectIfAuth }
         })
         .when('/register', {
           templateUrl: 'components/auth/register.view.html',
           controller: 'registerCtrl',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
+          resolve: { authCheck: redirectIfAuth }
         })
          .when('/profile', {
             templateUrl: 'components/profile/profile.view.html',
