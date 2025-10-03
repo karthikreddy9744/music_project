@@ -8,9 +8,19 @@ exports.list = async (req, res, next) => {
   } catch (e) { next(e); }
 };
 
+exports.get = async (req, res, next) => {
+  try {
+    const doc = await Festival.findById(req.params.id)
+      .populate('reviews.author', 'name');
+    if (!doc) return res.status(404).json({ message: 'Festival not found' });
+    res.json(doc);
+  } catch (e) { next(e); }
+};
+
+
 exports.create = async (req, res, next) => {
   try {
-    const { address, location, name, startDate, endDate, description } = req.body;
+    const { address, location, name, startDate, endDate, description, lineup } = req.body;
 
     if (!address || !location || typeof location.latitude !== 'number' || typeof location.longitude !== 'number') {
       return res.status(400).json({ message: 'Address and valid latitude/longitude required' });
@@ -23,6 +33,7 @@ exports.create = async (req, res, next) => {
       startDate,
       endDate,
       description,
+      lineup,
       createdBy: req.user._id
     });
     res.status(201).json(doc);
@@ -31,7 +42,7 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { address, location, name, startDate, endDate, description } = req.body;
+    const { address, location, name, startDate, endDate, description, lineup } = req.body;
 
     if (location && (typeof location.latitude !== 'number' || typeof location.longitude !== 'number')) {
       return res.status(400).json({ message: 'Valid latitude/longitude required' });
@@ -45,7 +56,8 @@ exports.update = async (req, res, next) => {
         location,
         startDate,
         endDate,
-        description
+        description,
+        lineup
       },
       { new: true }
     );

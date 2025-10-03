@@ -1,66 +1,75 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
-        <div class="page-header">
-            <h1>{{ vm.pageHeader.title }}</h1>
-        </div>
-
-        <div class="alert alert-danger" ng-if="vm.message">{{ vm.message }}</div>
-
-        <form ng-submit="vm.saveFestival()">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Details</h3>
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <form name="festivalForm" ng-submit="vm.onSubmit(festivalForm)" class="form-horizontal" novalidate>
+            <div role="alert" ng-show="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+            <div class="form-group" ng-class="{ 'has-error' : festivalForm.name.$invalid && festivalForm.name.$touched }">
+                <label for="name" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Festival Name" ng-model="vm.formData.name" required>
+                    <p ng-if="festivalForm.name.$invalid && festivalForm.name.$touched" class="help-block">Festival name is required.</p>
                 </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="name">Festival Name *</label>
-                        <input type="text" class="form-control" id="name" ng-model="vm.festival.name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Address *</label>
-                        <input type="text" class="form-control" id="address" ng-model="vm.festival.address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" id="description" ng-model="vm.festival.description"
-                            rows="3"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="startDate">Start Date *</label>
-                                <input type="date" class="form-control" id="startDate" ng-model="vm.festival.startDate"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="endDate">End Date *</label>
-                                <input type="date" class="form-control" id="endDate" ng-model="vm.festival.endDate"
-                                    required>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : festivalForm.address.$invalid && festivalForm.address.$touched }">
+                <label for="address" class="col-sm-2 control-label">Address</label>
+                <div class="col-sm-10">
+                    <input type="text" name="address" class="form-control" id="address" placeholder="e.g., 123 Main St, Anytown, USA" ng-model="vm.formData.address" required>
+                    <p ng-if="festivalForm.address.$invalid && festivalForm.address.$touched" class="help-block">Address is required.</p>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : festivalForm.startDate.$invalid && festivalForm.startDate.$touched }">
+                <label for="startDate" class="col-sm-2 control-label">Start Date</label>
+                <div class="col-sm-10">
+                    <input type="date" name="startDate" class="form-control" id="startDate" ng-model="vm.formData.startDate" required>
+                    <p ng-if="festivalForm.startDate.$invalid && festivalForm.startDate.$touched" class="help-block">Start date is required.</p>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : festivalForm.endDate.$invalid && festivalForm.endDate.$touched }">
+                <label for="endDate" class="col-sm-2 control-label">End Date</label>
+                <div class="col-sm-10">
+                    <input type="date" name="endDate" class="form-control" id="endDate" ng-model="vm.formData.endDate" required>
+                    <p ng-if="festivalForm.endDate.$invalid && festivalForm.endDate.$touched" class="help-block">End date is required.</p>
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Set Location <small>(Drag the marker to pinpoint the location)</small></h3>
+            <hr>
+            <h4>Set Location on Map</h4>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Location Search</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="Search for a place..." ng-model="vm.map.searchQuery">
                 </div>
-                <div class="panel-body">
-                    <leaflet-map location="vm.festival.location"></leaflet-map>
-                    <p class="text-muted small mt-2">
-                        Current Location: Lat **{{ vm.festival.location.latitude | number: 6 }}**, Lng **{{
-                        vm.festival.location.longitude | number: 6 }}**
-                    </p>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-default" ng-click="vm.searchLocation()">Search</button>
                 </div>
             </div>
+            <div id="map-picker" style="height: 300px; width: 100%; margin-bottom: 15px;"></div>
+            <div class="form-group">
+                <label for="lat" class="col-sm-2 control-label">Latitude</label>
+                <div class="col-sm-4">
+                    <input type="number" step="any" name="latitude" class="form-control" id="lat" ng-model="vm.formData.location.latitude" placeholder="e.g. 40.7128" required>
+                </div>
+                <label for="lng" class="col-sm-2 control-label">Longitude</label>
+                <div class="col-sm-4">
+                    <input type="number" step="any" name="longitude" class="form-control" id="lng" ng-model="vm.formData.location.longitude" placeholder="e.g. -74.0060" required>
+                </div>
+            </div>
+            <hr>
 
-            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                {{ vm.isEdit ? 'Save Changes' : 'Add Festival' }}
-            </button>
-            <a href="/" class="btn btn-default btn-block">Cancel</a>
+            <div class="form-group">
+                <label for="description" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                    <textarea name="description" class="form-control" id="description" rows="3" ng-model="vm.formData.description"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lineup" class="col-sm-2 control-label">Lineup</label>
+                <div class="col-sm-10">
+                    <input type="text" name="lineup" class="form-control" id="lineup" placeholder="Artist 1, Artist 2, ..." ng-model="vm.formData.lineup">
+                    <p class="help-block">Enter artists separated by commas.</p>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right" ng-disabled="festivalForm.$invalid">Save Festival</button>
         </form>
     </div>
 </div>

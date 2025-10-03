@@ -1,6 +1,13 @@
 //music-project/server/models/Festival.js
 const mongoose = require('mongoose');
 
+const reviewSubSchema = new mongoose.Schema({
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  reviewText: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const festivalSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -12,7 +19,9 @@ const festivalSchema = new mongoose.Schema(
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     description: String,
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    lineup: [String],
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    reviews: [reviewSubSchema]
   },
   { timestamps: true }
 );

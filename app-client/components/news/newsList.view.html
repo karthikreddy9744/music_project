@@ -1,42 +1,23 @@
 <div class="row">
-    <div class="col-12 text-center page-header">
-        <h1>{{ vm.pageHeader.title }}</h1>
+    <div class="col-xs-12">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-12">
-        <div class="alert alert-info text-center" ng-if="vm.message">{{ vm.message }}</div>
-
-        <div class="list-group">
-            <div ng-repeat="content in vm.contentList" class="panel panel-default mb-3">
-                <div class="panel-heading review-header">
-                    <h4 class="panel-title pull-left" style="color: white;">
-                        <span class="label"
-                            ng-class="{'label-primary': content.contentType === 'news', 'label-info': content.contentType === 'review'}">
-                            {{ content.contentType | uppercase }}
-                        </span>
-                        {{ content.title }}
-                    </h4>
-
-                    <div class="pull-right" ng-if="vm.isAdmin">
-                        <a ng-if="content.contentType === 'news'" href="/news/{{ content._id }}/edit"
-                            class="btn btn-warning btn-xs">Edit</a>
-                        <a ng-if="content.contentType === 'review'" href="/reviews/{{ content._id }}/edit"
-                            class="btn btn-warning btn-xs">Edit</a>
-                        <button ng-click="vm.deleteContent(content._id, content.contentType)"
-                            class="btn btn-danger btn-xs">Delete</button>
+    <div class="col-xs-12">
+        <div class="error">{{ vm.message }}</div>
+        <div class="panel panel-default" ng-repeat="article in vm.news" scroll-fade-in>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8">
+                        <h4>{{ article.title }}</h4>
+                        <p><small>By {{ article.authorId.name }} on {{ article.createdAt | date:'medium' }}</small></p>
+                        <p ng-if="article.body">{{ article.body.substring(0, 150) }}...</p>
                     </div>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="panel-body">
-                    <p class="review-body">{{ content.body | limitTo: 200 }}...</p>
-                    <p class="text-muted small">
-                        Posted by <strong>{{ content.authorId.name || 'Unknown' }}</strong>
-                        on {{ content.createdAt | date:'medium' }}
-                    </p>
-                    <a ng-if="content.contentType === 'news'" href="/news/{{ content._id }}"
-                        class="btn btn-default btn-xs">Read More</a>
+                    <div class="col-xs-12 col-sm-4 text-right">
+                        <a href="/news/{{ article._id }}" class="btn btn-primary" style="margin-top: 10px;" ng-click="rootvm.playSound()">Read More</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,26 +1,41 @@
 <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <div class="page-header">
-            <h1>{{ vm.pageHeader.title }}</h1>
-        </div>
-        <div class="alert alert-danger" ng-if="vm.message">{{ vm.message }}</div>
+    <div class="col-xs-12">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <div ng-if="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+    </div>
+</div>
 
-        <div class="well">
-            <form ng-submit="vm.saveNews()">
-                <div class="form-group">
-                    <label for="title">Article Title *</label>
-                    <input type="text" class="form-control" id="title" ng-model="vm.article.title" required>
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <form name="newsForm" ng-submit="vm.onSubmit(newsForm)" novalidate>
+            <div class="form-group">
+                <label for="title">Article Title</label>
+                <input type="text" class="form-control" id="title" name="title" ng-model="vm.formData.title" required>
+                <div ng-show="newsForm.title.$touched && newsForm.title.$invalid" class="text-danger">
+                    Title is required.
                 </div>
-                <div class="form-group">
-                    <label for="body">Article Content *</label>
-                    <textarea class="form-control" id="body" rows="10" ng-model="vm.article.body" required></textarea>
-                </div>
+            </div>
 
-                <button type="submit" class="btn btn-primary btn-block">
-                    {{ vm.isEdit ? 'Update Article' : 'Publish Article' }}
-                </button>
-                <a href="/news" class="btn btn-default btn-block">Cancel</a>
-            </form>
-        </div>
+            <div class="form-group">
+                <label for="body">Article Body</label>
+                <textarea class="form-control" id="body" name="body" rows="5" ng-model="vm.formData.body"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="imageFile">Cover Image</label>
+                <p class="help-block">Upload a new image. This will replace any existing image.</p>
+                <input type="file" id="imageFile" file-model="vm.imageFile" accept="image/*">
+            </div>
+
+            <!-- Display current image if editing -->
+            <div ng-if="vm.isEdit && vm.formData.media.length > 0">
+                <p><strong>Current Image:</strong></p>
+                <img ng-src="{{ vm.formData.media[0].url }}" class="img-responsive img-thumbnail" style="max-height: 200px;" alt="Current news image">
+            </div>
+
+            <hr>
+            <button type="submit" class="btn btn-primary" ng-disabled="newsForm.$invalid">Save Article</button>
+            <a href="/news" class="btn btn-default">Cancel</a>
+        </form>
     </div>
 </div>

@@ -3,8 +3,8 @@
 (function () {
     'use strict';
 
-    function festivalsData($http) {
-        const api = '/api/festivals';
+    function festivalsData($http, API_BASE) {
+        const api = `${API_BASE}/festivals`;
 
         // GET /api/festivals
         this.getFestivals = function () {
@@ -15,7 +15,7 @@
         // We'll simulate fetching a single one by ID if needed for edit.
         // In the provided backend, there is no GET /festivals/:id public route, but we'll use it for CRUD.
         this.getFestivalById = function (festivalid) {
-            return $http.get(api + '/' + festivalid); 
+            return $http.get(`${api}/${festivalid}`); 
         };
         
         // POST /api/festivals (Admin protected)
@@ -25,15 +25,15 @@
         
         // PUT /api/festivals/:id (Admin protected)
         this.updateFestival = function (festivalid, data) {
-            return $http.put(api + '/' + festivalid, data);
+            return $http.put(`${api}/${festivalid}`, data);
         };
 
         // DELETE /api/festivals/:id (Admin protected)
         this.deleteFestival = function (festivalid) {
-            return $http.delete(api + '/' + festivalid);
+            return $http.delete(`${api}/${festivalid}`);
         };
     }
 
     angular.module('musicProjectApp').service('festivalsData', festivalsData);
-    festivalsData.$inject = ['$http'];
+    festivalsData.$inject = ['$http', 'API_BASE'];
 })();

@@ -1,36 +1,41 @@
 <div class="row">
-    <div class="col-12 text-center page-header">
-        <h1>{{ vm.pageHeader.title }}</h1>
-        <p class="lead">Check out the upcoming festivals.</p>
+    <div class="col-xs-12">
+        <h1 class="page-header">{{ vm.pageHeader.title }} <small>{{ vm.pageHeader.strapline }}</small></h1>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-12">
-        <div class="alert alert-info text-center" ng-if="vm.message">{{ vm.message }}</div>
-
-        <div class="list-group">
-            <a ng-repeat="festival in vm.festivals" href="/festivals/{{ festival._id }}"
-                class="list-group-item list-group-item-action mb-3 panel panel-default">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-8">
-                            <h4 class="list-group-item-heading text-primary">{{ festival.name }}</h4>
-                            <p class="list-group-item-text">{{ festival.description || 'No description provided.' }}</p>
-                            <p class="list-group-item-text address">
-                                <span class="glyphicon glyphicon-map-marker"></span> {{ festival.address }}
-                            </p>
-                        </div>
-                        <div class="col-xs-12 col-sm-4 text-right">
-                            <small class="text-muted">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                                {{ festival.startDate | date:'mediumDate' }} - {{ festival.endDate | date:'mediumDate'
-                                }}
-                            </small>
-                        </div>
+    <div class="col-xs-12 col-md-8">
+        <div class="error">{{ vm.message }}</div>
+        <!-- New Card-like layout for festivals -->
+        <div class="panel panel-default" ng-repeat="festival in vm.festivals" scroll-fade-in>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8">
+                        <h4>{{ festival.name }}</h4>
+                        <p><span class="glyphicon glyphicon-map-marker"></span> {{ festival.address }}</p>
+                        <p><span class="glyphicon glyphicon-calendar"></span> {{ festival.startDate | date:'mediumDate' }} - {{ festival.endDate | date:'mediumDate' }}</p>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 text-right">
+                        <a href="/festivals/{{ festival._id }}" class="btn btn-primary" style="margin-top: 20px;" ng-click="rootvm.playSound()">View Details</a>
                     </div>
                 </div>
-            </a>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Recent News</h3>
+            </div>
+            <div class="list-group">
+                <p ng-if="!vm.sidebarNews && vm.sidebarMessage" class="list-group-item">{{ vm.sidebarMessage }}</p>
+                <a ng-repeat="item in vm.sidebarNews" href="/news/{{ item._id }}" class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ item.title }}</h4>
+                    <p class="list-group-item-text">by {{ item.authorId.name }}</p>
+                </a>
+            </div>
         </div>
     </div>
 </div>

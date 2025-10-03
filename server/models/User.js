@@ -6,7 +6,15 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true },
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    pronouns: { type: String },
+    interests: [String],
+    hobbies: [String],
+    bio: { type: String, maxlength: 500 },
+    address: { type: String },
+    profilePicture: { type: String },
     password: { type: String, required: true },
+    // role references
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }]
   },
   { timestamps: true }

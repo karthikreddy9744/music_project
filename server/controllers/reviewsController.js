@@ -1,59 +1,40 @@
 //music-project/server/controllers/reviewsController.js
 const Content = require('../models/Content');
-const Review = require('../models/Review');
+const Festival = require('../models/Festival');
 
-exports.list = async (req, res, next) => {
+exports.addReviewToContent = async (req, res, next) => {
   try {
-    const items = await Content.find({ contentType: 'review' }).sort('-createdAt').populate('authorId', 'name');
-    res.json(items);
-  } catch (e) { next(e); }
-};
-
-exports.create = async (req, res, next) => {
-  try {
-    // Expect { title, body, track, rating }
-    const content = await Content.create({
-      contentType: 'review',
-      title: req.body.title,
-      body: req.body.body,
-      authorId: req.user._id,
-      media: req.body.media || []
-    });
-
-    const review = await Review.create({
-      contentRef: content._id,
-      track: req.body.track || {},
-      rating: req.body.rating || 3
-    });
-
-    res.status(201).json({ content, review });
-  } catch (e) { next(e); }
-};
-
-exports.update = async (req, res, next) => {
-  try {
-    const content = await Content.findOneAndUpdate(
-      { _id: req.params.id, contentType: 'review' },
-      { title: req.body.title, body: req.body.body, media: req.body.media },
-      { new: true }
-    );
-    if (!content) return res.status(404).json({ message: 'Not found' });
-
-    if (req.body.rating || req.body.track) {
-      await Review.findOneAndUpdate(
-        { contentRef: content._id },
-        { rating: req.body.rating, track: req.body.track },
-        { new: true }
-      );
+    const { rating, reviewText } = req.body;
+    const content = await Content.findById(req.params.contentId);
+    if (!content) return res.status(404).json({ message: 'Content not found' });
+    
+    // Only allow reviews on 'music' content type
+    if (content.contentType !== 'music') {
+      return res.status(400).json({ message: 'Reviews are not enabled for this content type.' });
     }
-    res.json(content);
+    
+    const review = { author: req.user._id, rating, reviewText };
+    content.reviews.push(review);
+    
+    await content.save();
+    res.status(201).json(content);
   } catch (e) { next(e); }
 };
 
-exports.remove = async (req, res, next) => {
+exports.addReviewToFestival = async (req, res, next) => {
   try {
-    const content = await Content.findOneAndDelete({ _id: req.params.id, contentType: 'review' });
-    if (content) await Review.findOneAndDelete({ contentRef: content._id });
-    res.json({ ok: true });
+    const { rating, reviewText } = req.body;
+    const festival = await Festival.findById(req.params.festivalId);
+    if (!festival) return res.status(404).json({ message: 'Festival not found' });
+
+    const review = { author: req.user._id, rating, reviewText };
+    festival.reviews.push(review);
+
+    await festival.save();
+    res.status(201).json(festival);
   } catch (e) { next(e); }
 };
+
+// Note: Deleting and updating sub-document reviews would require more specific logic.
+// For example, POST /api/festivals/:festivalId/reviews/:reviewId/delete
+// This is a good next step for enhancing the API.

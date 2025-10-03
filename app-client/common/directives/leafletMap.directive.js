@@ -23,19 +23,11 @@
                             attribution: '&copy; OpenStreetMap contributors'
                         }).addTo(map);
 
-                        marker = L.marker([lat, lng], { 
-                            draggable: true,
-                            title: "Drag to set location"
+                        // The marker on the detail page should not be draggable.
+                        // It's for display purposes only.
+                        marker = L.marker([lat, lng], {
+                            draggable: false 
                         }).addTo(map);
-
-                        marker.on('dragend', function() {
-                            const newLatlng = marker.getLatLng();
-                            scope.$apply(function() {
-                                // Update the model: [lng, lat] for GeoJSON Point structure used in backend (Festival model)
-                                scope.location.longitude = newLatlng.lng;
-                                scope.location.latitude = newLatlng.lat;
-                            });
-                        });
                     }, 0);
                 }
 

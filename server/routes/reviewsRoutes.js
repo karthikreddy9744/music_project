@@ -3,12 +3,9 @@ const router = require('express').Router();
 const { requireAuth } = require('../middlewares/authMiddleware');
 const ctrl = require('../controllers/reviewsController');
 
-// Public
-router.get('/', ctrl.list);
-
-// Authenticated users can create/update/delete their reviews (can be extended with ownership checks)
-router.post('/', requireAuth, ctrl.create);
-router.put('/:id', requireAuth, ctrl.update);
-router.delete('/:id', requireAuth, ctrl.remove);
+// POST a new review to a specific piece of content (news)
+router.post('/content/:contentId', requireAuth, ctrl.addReviewToContent);
+// POST a new review to a specific festival
+router.post('/festivals/:festivalId', requireAuth, ctrl.addReviewToFestival);
 
 module.exports = router;

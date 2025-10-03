@@ -1,28 +1,26 @@
 // app-client/common/services/user.service.js
-// app-client/common/services/user.service.js
 (function () {
     'use strict';
 
-    function userData($http) {
-        const api = '/api';
+    function userService($http, API_BASE) {
+        const api = API_BASE;
 
-        // GET /api/auth/me (Auth required)
+        // GET /api/profile/me (Auth required)
         this.getProfile = function () {
-            return $http.get(api + '/auth/me');
+            return $http.get(`${api}/profile/me`);
         };
         
-        // Example only: Assume new endpoints are available for user CRUD
-        // PUT /api/users/me (User-specific updates)
+        // PUT /api/profile/me (User-specific updates)
         this.updateProfile = function (data) {
-            return $http.put(api + '/users/me', data);
+            return $http.put(`${api}/profile/me`, data);
         };
 
         // GET /api/users (Admin protected)
         this.getAllUsers = function () {
-            return $http.get(api + '/users');
+            return $http.get(`${api}/users`);
         };
     }
 
-    angular.module('musicProjectApp').service('userData', userData);
-    userData.$inject = ['$http'];
+    angular.module('musicProjectApp').service('userService', userService);
+    userService.$inject = ['$http', 'API_BASE'];
 })();

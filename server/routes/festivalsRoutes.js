@@ -6,6 +6,7 @@ const ctrl = require('../controllers/festivalsController');
 
 // Public
 router.get('/', ctrl.list);
+router.get('/:id', ctrl.get); // This must be before other routes with params
 
 // Admin
 router.post('/', requireAuth, requireRole('admin'), ctrl.create);

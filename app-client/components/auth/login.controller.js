@@ -1,36 +1,37 @@
-// app-client/components/auth/login.controller.js
-// app-client/components/auth/login.controller.js
 (function () {
     'use strict';
 
-    function loginCtrl($http, $location, authService) {
+    function loginCtrl($location, authService) {
         var vm = this;
-        vm.credentials = {};
-        vm.error = null;
 
-        vm.login = function () {
-            vm.error = null;
-            if (!vm.credentials.email || !vm.credentials.password) {
-                vm.error = "All fields are required.";
+        vm.pageHeader = {
+            title: 'Sign in to Music Project'
+        };
+
+        vm.credentials = {
+            email: '',
+            password: ''
+        };
+
+        vm.returnPage = $location.search().page || '/';
+
+        vm.onSubmit = function (loginForm) {
+            vm.formError = '';
+            if (loginForm.$invalid) {
                 return;
+            } else {
+                authService
+                    .login(vm.credentials)
+                    .then(function () {
+                        $location.search('page', null);
+                        $location.path(vm.returnPage);
+                    })
+                    .catch(function (err) {
+                        vm.formError = err.data.message || "Something went wrong, please try again.";
+                    });
             }
-
-            // POST /api/auth/login
-            $http.post('/api/auth/login', vm.credentials)
-                .then(function (response) {
-                    if (response.data && response.data.token) {
-                        authService.saveToken(response.data.token);
-                        $location.path('/');
-                    } else {
-                        vm.error = "Login failed: No token received.";
-                    }
-                })
-                .catch(function (error) {
-                    vm.error = (error.data && error.data.message) || "Login failed due to a server error.";
-                });
         };
     }
-
     angular.module('musicProjectApp').controller('loginCtrl', loginCtrl);
-    loginCtrl.$inject = ['$http', '$location', 'authService'];
+    loginCtrl.$inject = ['$location', 'authService'];
 })();

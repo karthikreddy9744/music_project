@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <form name="musicForm" ng-submit="vm.onSubmit(musicForm)" class="form-horizontal" novalidate>
+            <div role="alert" ng-show="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+            <div class="form-group" ng-class="{ 'has-error' : musicForm.title.$invalid && musicForm.title.$touched }">
+                <label for="title" class="col-sm-2 control-label">Title</label>
+                <div class="col-sm-10">
+                    <input type="text" name="title" class="form-control" id="title" placeholder="e.g., Album or Track Name" ng-model="vm.formData.title" required>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : musicForm.body.$invalid && musicForm.body.$touched }">
+                <label for="body" class="col-sm-2 control-label">Body</label>
+                <div class="col-sm-10">
+                    <textarea name="body" class="form-control" id="body" rows="10" ng-model="vm.formData.body" placeholder="Description, review, or details about the music..." required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="musicFile" class="col-sm-2 control-label">Audio File</label>
+                <div class="col-sm-10">
+                    <input type="file" id="musicFile" file-model="vm.musicFile" accept="audio/*">
+                    <p class="help-block" ng-if="vm.musicFile">{{ vm.musicFile.name }} selected.</p>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right" ng-disabled="musicForm.$invalid">Save Music Entry</button>
+        </form>
+    </div>
+</div>

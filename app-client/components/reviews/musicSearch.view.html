@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <p>Search for a track on Spotify to write a review about it.</p>
+
+        <form ng-submit="vm.search()">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for a track..." ng-model="vm.searchText">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">Search</button>
+                </span>
+            </div>
+        </form>
+
+        <div class="list-group" style="margin-top: 20px;">
+            <div class="list-group-item" ng-if="vm.message">{{ vm.message }}</div>
+            <div class="list-group-item" ng-repeat="track in vm.results">
+                <h4 class="list-group-item-heading">{{ track.name }}</h4>
+                <p class="list-group-item-text">{{ track.artist }}</p>
+                <a href="/reviews/add/{{ track.id }}" class="btn btn-primary btn-xs pull-right">Review this track</a>
+            </div>
+        </div>
+    </div>
+</div>

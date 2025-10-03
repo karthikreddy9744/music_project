@@ -2,15 +2,16 @@
 (function () {
     'use strict';
 
-    function adminData($http) {
-        const api = '/api/admin';
+    function adminData($http, API_BASE) {
+        const api = `${API_BASE}/admin`;
 
         // GET /api/admin/stats (Admin protected)
         this.getStats = function () {
-            return $http.get(api + '/stats');
+            // The JWT token (with role info) is automatically attached by authInterceptor
+            return $http.get(`${api}/stats`);
         };
     }
 
     angular.module('musicProjectApp').service('adminData', adminData);
-    adminData.$inject = ['$http'];
+    adminData.$inject = ['$http', 'API_BASE'];
 })();

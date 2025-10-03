@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" ng-controller="navigationCtrl as navvm">
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -8,23 +8,54 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Music Project</a>
+            <a class="navbar-brand" href="/">Music Hub</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Festivals</a></li>
-                <li><a href="/news">News & Reviews</a></li>
+                <li ng-if="navvm.isLoggedIn()"><a href="/">Festivals</a></li>
+                <li ng-if="navvm.isLoggedIn()"><a href="/music">Music</a></li>
+                <li ng-if="navvm.isLoggedIn()"><a href="/news">News</a></li>
             </ul>
+            <!-- Global Search Bar -->
+            <div class="navbar-form navbar-left global-search-container" ng-if="navvm.isLoggedIn()">
+                <div class="form-group" ng-class="{'has-results': navvm.searchResults && (navvm.searchResults.festivals.length > 0 || navvm.searchResults.music.length > 0 || navvm.searchResults.news.length > 0)}">
+                    <input type="text" class="form-control" placeholder="Search festivals, music, news..."
+                        ng-model="navvm.searchQuery" ng-change="navvm.onSearchChange()" ng-model-options="{debounce: 300}"
+                        style="width: 300px;">
+                    
+                    <!-- Search Results Dropdown -->
+                    <div class="search-results-dropdown" ng-if="navvm.searchQuery.length > 1">
+                        <div ng-if="navvm.searchResults === 'searching'" class="loading-item">Searching...</div>
+                        <div ng-if="navvm.searchResults && navvm.searchResults !== 'searching' && navvm.searchResults.festivals.length === 0 && navvm.searchResults.music.length === 0 && navvm.searchResults.news.length === 0" class="loading-item">No results found.</div>
+
+                        <!-- Festivals -->
+                        <div ng-if="navvm.searchResults.festivals.length > 0">
+                            <div class="category-header">Festivals</div>
+                            <a ng-repeat="item in navvm.searchResults.festivals" href="/festivals/{{item._id}}" class="result-item" ng-mousedown="navvm.clearSearch()">{{ item.name }}</a>
+                        </div>
+
+                        <!-- Music -->
+                        <div ng-if="navvm.searchResults.music.length > 0">
+                            <div class="category-header">Music</div>
+                            <a ng-repeat="item in navvm.searchResults.music" href="/music/{{item._id}}" class="result-item" ng-mousedown="navvm.clearSearch()">{{ item.title }}</a>
+                        </div>
+
+                        <!-- News -->
+                        <div ng-if="navvm.searchResults.news.length > 0">
+                            <div class="category-header">News</div>
+                            <a ng-repeat="item in navvm.searchResults.news" href="/news/{{item._id}}" class="result-item" ng-mousedown="navvm.clearSearch()">{{ item.title }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <ul class="nav navbar-nav navbar-right">
                 <li ng-if="navvm.isAdmin()"><a href="/festivals/add">Add Festival <i
                             class="glyphicon glyphicon-plus-sign"></i></a></li>
-                <li ng-if="navvm.isAdmin()"><a href="/news/add">Add News <i
+                <li ng-if="navvm.isAdmin()"><a href="/music/add">Add Music <i
                             class="glyphicon glyphicon-plus-sign"></i></a></li>
+                <li ng-if="navvm.isAdmin()"><a href="/news/add">Add News <i class="glyphicon glyphicon-plus-sign"></i></a></li>
                 <li ng-if="navvm.isAdmin()"><a href="/admin/stats">Admin Stats</a></li>
-
-                <li ng-if="navvm.isLoggedIn()">
-                    <a href="/reviews/add">Post Review <i class="glyphicon glyphicon-pencil"></i></a>
-                </li>
 
                 <li ng-if="navvm.isLoggedIn()" class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -32,12 +63,13 @@
                         {{ navvm.currentUsername() }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" ng-click="navvm.logout()">Logout</a></li>
+                        <li><a href="/profile">Profile</a></li>
                     </ul>
                 </li>
 
                 <li ng-if="!navvm.isLoggedIn()"><a href="/register">Register</a></li>
                 <li ng-if="!navvm.isLoggedIn()"><a href="/login">Login</a></li>
+                <li ng-if="navvm.isLoggedIn()"><a href="#" ng-click="navvm.logout()">Logout</a></li>
             </ul>
         </div>
     </div>

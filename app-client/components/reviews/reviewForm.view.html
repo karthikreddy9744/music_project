@@ -1,47 +1,23 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
-        <div class="page-header">
-            <h1>{{ vm.pageHeader.title }}</h1>
-        </div>
-        <div class="well">
-            <form ng-submit="vm.saveReview()">
-                <div class="alert alert-danger" ng-if="vm.formError">{{ vm.formError }}</div>
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
 
-                <div class="form-group">
-                    <label for="title">Review Title *</label>
-                    <input type="text" class="form-control" id="title" ng-model="vm.review.title" required>
+        <form ng-submit="vm.onSubmit()" class="form-horizontal">
+            <div role="alert" ng-show="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+            
+            <div class="form-group">
+                <label for="rating" class="col-sm-2 control-label">Rating</label>
+                <div class="col-sm-10">
+                    <star-rating rating-value="vm.formData.rating"></star-rating>
                 </div>
-
-                <div class="form-group">
-                    <label>Rating * ({{ vm.review.rating || 3 }}/5)</label>
-                    <div>
-                        <star-rating rating-value="vm.review.rating"></star-rating>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="reviewText" class="col-sm-2 control-label">Review</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="reviewText" rows="5" ng-model="vm.formData.reviewText" placeholder="Write your review here..." required></textarea>
                 </div>
-
-                <div class="form-group">
-                    <label for="body">Review Content *</label>
-                    <textarea class="form-control" id="body" rows="5" ng-model="vm.review.body" required></textarea>
-                </div>
-
-                <div class="panel panel-info">
-                    <div class="panel-heading">Track Details (Optional)</div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label for="trackTitle">Track Title</label>
-                            <input type="text" class="form-control" id="trackTitle" ng-model="vm.review.track.title">
-                        </div>
-                        <div class="form-group">
-                            <label for="trackArtist">Artist</label>
-                            <input type="text" class="form-control" id="trackArtist" ng-model="vm.review.track.artist">
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">
-                    {{ vm.isEdit ? 'Update Review' : 'Post Review' }}
-                </button>
-            </form>
-        </div>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right" ng-disabled="!vm.itemId">Submit Review</button>
+        </form>
     </div>
 </div>

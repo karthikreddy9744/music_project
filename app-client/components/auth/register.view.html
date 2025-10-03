@@ -1,28 +1,48 @@
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
-        <div class="well">
-            <h2 class="text-center">Register Account</h2>
-            <form ng-submit="vm.register()">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" ng-model="vm.credentials.name" required>
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <form name="registerForm" ng-submit="vm.onSubmit(registerForm)" class="form-horizontal" novalidate>
+            <div role="alert" ng-show="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+            
+            <div class="form-group" ng-class="{ 'has-error' : registerForm.name.$invalid && registerForm.name.$touched }">
+                <label for="name" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter your name" ng-model="vm.credentials.name" ng-model-options="{ updateOn: 'blur' }" required>
+                    <p ng-if="registerForm.name.$invalid && registerForm.name.$touched" class="help-block">Name is required.</p>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" ng-model="vm.credentials.email" required>
+            </div>
+            
+            <div class="form-group" ng-class="{ 'has-error' : registerForm.email.$invalid && registerForm.email.$touched }">
+                <label for="email" class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Enter email" ng-model="vm.credentials.email" ng-model-options="{ updateOn: 'blur' }" required>
+                    <p ng-if="registerForm.email.$error.required && registerForm.email.$touched" class="help-block">Email is required.</p>
+                    <p ng-if="registerForm.email.$error.email && registerForm.email.$touched" class="help-block">Please enter a valid email address.</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" ng-model="vm.credentials.password"
-                        required>
+            </div>
+            
+            <div class="form-group" ng-class="{ 'has-error' : registerForm.password.$invalid && registerForm.password.$touched }">
+                <label for="password" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" ng-model="vm.credentials.password" ng-model-options="{ updateOn: 'blur' }" required>
+                     <p ng-if="registerForm.password.$invalid && registerForm.password.$touched" class="help-block">Password is required.</p>
                 </div>
-
-                <div class="alert alert-danger" role="alert" ng-if="vm.error">
-                    {{ vm.error }}
+            </div>
+            
+            <div class="form-group" ng-class="{ 'has-error' : (registerForm.confirmPassword.$touched && registerForm.confirmPassword.$invalid) || vm.passwordsMismatch }">
+                <label for="confirmPassword" class="col-sm-2 control-label">Confirm Password</label>
+                <div class="col-sm-10">
+                    <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password" ng-model="vm.credentials.confirmPassword" ng-model-options="{ updateOn: 'blur' }" required>
+                    <p ng-if="registerForm.confirmPassword.$error.required && registerForm.confirmPassword.$touched" class="help-block">Please confirm your password.</p>
+                    <p ng-if="vm.passwordsMismatch && registerForm.confirmPassword.$dirty" class="help-block">Passwords do not match.</p>
                 </div>
-
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
-            </form>
-        </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary pull-right" ng-disabled="registerForm.$invalid || vm.passwordsMismatch">Register</button>
+            <div class="col-xs-12" style="margin-top: 20px;">
+                <hr>
+                <p class="text-center">Already have an account? <a href="/login">Sign in here</a>.</p>
+            </div>
+        </form>
     </div>
 </div>

@@ -1,11 +1,10 @@
 // app-client/app.js
-// app-client/app.js
 (function () {
   'use strict';
-
-  angular.module('musicProjectApp', ['ngRoute'])
+  // Add 'angular.filter' for the groupBy filter in the admin dashboard
+  angular.module('musicProjectApp', ['ngRoute', 'chart.js', 'angular.filter'])
     
-    .constant('API_BASE', 'http://localhost:3000/api')
+    .value('API_BASE', 'http://localhost:3000/api')
     .config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
       
       $locationProvider.html5Mode(true).hashPrefix('');
@@ -28,22 +27,14 @@
           return true;
       }];
 
-
       // Route Configuration
       $routeProvider
-        // Home/Festivals (Public)
         .when('/', {
           templateUrl: 'components/home/home.view.html',
           controller: 'homeCtrl',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
         })
-        .when('/festivals/:festivalid', {
-          templateUrl: 'components/festivals/festivalDetail.view.html',
-          controller: 'festivalDetailCtrl',
-          controllerAs: 'vm'
-        })
-
-        // Auth (Public)
         .when('/login', {
           templateUrl: 'components/auth/login.view.html',
           controller: 'loginCtrl',
@@ -54,8 +45,12 @@
           controller: 'registerCtrl',
           controllerAs: 'vm'
         })
-
-        // Admin/Auth Protected Routes
+         .when('/profile', {
+            templateUrl: 'components/profile/profile.view.html',
+            controller: 'profileCtrl',
+            controllerAs: 'vm',
+            resolve: { authCheck: requireAuth }
+        })
         .when('/festivals/add', {
             templateUrl: 'components/festivals/festivalForm.view.html',
             controller: 'festivalFormCtrl',
@@ -68,24 +63,23 @@
             controllerAs: 'vm',
             resolve: { adminCheck: requireAdmin }
         })
-        .when('/reviews/add', { // Post Review is separate from festival in backend
+        .when('/festivals/:festivalid', {
+          templateUrl: 'components/festivals/festivalDetail.view.html',
+          controller: 'festivalDetailCtrl',
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
+        })
+        .when('/review/add/:itemType/:itemId', {
             templateUrl: 'components/reviews/reviewForm.view.html',
             controller: 'reviewFormCtrl',
             controllerAs: 'vm',
             resolve: { authCheck: requireAuth }
         })
-        .when('/reviews/:reviewid/edit', {
-            templateUrl: 'components/reviews/reviewForm.view.html',
-            controller: 'reviewFormCtrl',
-            controllerAs: 'vm',
-            resolve: { authCheck: requireAuth }
-        })
-
-        // News (Public List/Detail, Admin Protected CRUD)
         .when('/news', {
           templateUrl: 'components/news/newsList.view.html',
           controller: 'newsListCtrl',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
         })
         .when('/news/add', {
             templateUrl: 'components/news/newsForm.view.html',
@@ -93,45 +87,57 @@
             controllerAs: 'vm',
             resolve: { adminCheck: requireAdmin }
         })
-        .when('/news/:newsid', {
+        .when('/news/:newsId', {
           templateUrl: 'components/news/newsDetail.view.html',
           controller: 'newsDetailCtrl',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
         })
-        .when('/news/:newsid/edit', {
+        .when('/news/:newsId/edit', {
             templateUrl: 'components/news/newsForm.view.html',
             controller: 'newsFormCtrl',
             controllerAs: 'vm',
             resolve: { adminCheck: requireAdmin }
         })
-        
-        // Admin
+        .when('/reviews/search-music', {
+            templateUrl: 'components/reviews/musicSearch.view.html',
+            controller: 'musicSearchCtrl',
+            controllerAs: 'vm',
+            resolve: { authCheck: requireAuth }
+        })
+        .when('/music', {
+          templateUrl: 'components/music/musicList.view.html',
+          controller: 'musicListCtrl',
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
+        })
+        .when('/music/add', {
+            templateUrl: 'components/music/musicForm.view.html',
+            controller: 'musicFormCtrl',
+            controllerAs: 'vm',
+            resolve: { adminCheck: requireAdmin }
+        })
+        .when('/music/:musicId', {
+          templateUrl: 'components/music/musicDetail.view.html',
+          controller: 'musicDetailCtrl',
+          controllerAs: 'vm',
+          resolve: { authCheck: requireAuth }
+        })
+        .when('/music/:musicId/edit', {
+            templateUrl: 'components/music/musicForm.view.html',
+            controller: 'musicFormCtrl',
+            controllerAs: 'vm',
+            resolve: { adminCheck: requireAdmin }
+        })
         .when('/admin/stats', {
             templateUrl: 'components/admin/adminStats.view.html',
             controller: 'adminStatsCtrl',
             controllerAs: 'vm',
             resolve: { adminCheck: requireAdmin }
         })
-        
         .otherwise({
           redirectTo: '/'
         });
     }]);
-
-    // JWT Interceptor Factory
-    angular.module('musicProjectApp').factory('authInterceptor', authInterceptor);
-    authInterceptor.$inject = ['authService'];
-    function authInterceptor(authService) {
-        return {
-            request: function(config) {
-                const token = authService.getToken();
-                if (token) {
-                    config.headers = config.headers || {};
-                    config.headers.Authorization = 'Bearer ' + token;
-                }
-                return config;
-            }
-        };
-    }
 
 })();

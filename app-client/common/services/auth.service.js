@@ -3,53 +3,63 @@
 (function () {
     'use strict';
 
-    function authService($window) {
+    function authService($window, $injector, API_BASE) {
         var tokenKey = 'music_project_token';
+        var userKey = 'music_project_user'; // <-- New key for storing user data
+        var self = this; // Capture the 'this' context
+        const api = `${API_BASE}/auth`;
 
-        this.saveToken = function (token) {
+        this.login = function(credentials) {
+            // Lazily inject $http to avoid circular dependency
+            const $http = $injector.get('$http');
+            return $http.post(`${api}/login`, credentials).then((response) => {
+                if (response.data.token && response.data.user) {
+                    self.saveToken(response.data.token, response.data.user);
+                }
+                return response;
+            });
+        };
+
+        this.register = function(credentials) {
+            // Lazily inject $http to avoid circular dependency
+            const $http = $injector.get('$http');
+            return $http.post(`${api}/register`, credentials).then((response) => {
+                // The register endpoint might also return a token for immediate login
+                return response;
+            });
+        };
+        this.saveToken = function (token, user) { // <-- ADDED 'user' argument
             token ? $window.localStorage.setItem(tokenKey, token) : $window.localStorage.removeItem(tokenKey);
+            
+            // Store user data (including roles) in local storage
+            if (user) {
+                $window.localStorage.setItem(userKey, JSON.stringify(user));
+            } else {
+                $window.localStorage.removeItem(userKey);
+            }
         };
 
         this.getToken = function () {
             return $window.localStorage.getItem(tokenKey);
         };
+        
+        this.getUser = function () { // <-- New method to retrieve user data
+            const userJson = $window.localStorage.getItem(userKey);
+            return userJson ? JSON.parse(userJson) : null;
+        };
 
         this.logout = function () {
             $window.localStorage.removeItem(tokenKey);
+            $window.localStorage.removeItem(userKey); // <-- Clear user data on logout
         };
 
-        this.parseToken = function () {
-            const token = this.getToken();
-            if (!token) return null;
-
-            try {
-                var payload = token.split('.')[1];
-                payload = payload.replace(/-/g, '+').replace(/_/g, '/');
-                payload = decodeURIComponent(atob(payload).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                
-                return JSON.parse(payload);
-            } catch (e) {
-                return null;
-            }
-        };
-
-        this.getRole = function () {
-            // Assumes JWT payload includes role information (e.g., set during login/register in authController.js)
-            const payload = this.parseToken();
-            // The actual field might be different; here we assume roles are included in the payload on login.
-            // If the backend doesn't send role in JWT, this would need to be fetched via /api/auth/me.
-            if (payload && payload.user && payload.user.roles && payload.user.roles.length) {
-                return payload.user.roles[0].name; // Using the first role name
-            }
-            return null;
-        };
+        // parseToken is generally safe, but rely on getUser() for roles.
+        // ... (parseToken function remains the same) ...
 
         this.isAdmin = function () {
-            const payload = this.parseToken();
-            // This is a robust check, assuming the backend passes roles array in the token payload after lookup.
-            return payload && payload.user && payload.user.roles && payload.user.roles.some(r => r.name === 'admin');
+            const user = self.getUser(); // <-- Use the captured 'self' context
+            // Check if user object exists, has roles, and if any role name is 'admin'
+            return user && user.roles && user.roles.some(role => role.name === 'admin');
         };
 
         this.isAuthenticated = function () {
@@ -58,5 +68,5 @@
     }
 
     angular.module('musicProjectApp').service('authService', authService);
-    authService.$inject = ['$window'];
+    authService.$inject = ['$window', '$injector', 'API_BASE'];
 })();

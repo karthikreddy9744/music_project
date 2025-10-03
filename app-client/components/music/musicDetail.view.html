@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <div ng-if="vm.error" class="alert alert-danger">{{ vm.error }}</div>
+    </div>
+</div>
+
+<div class="row" ng-if="vm.data.music">
+    <div class="col-xs-12 col-md-8">
+        <p><em>Posted by {{ vm.data.music.authorId.name }} on {{ vm.data.music.createdAt | date:'longDate' }}</em></p>
+
+        <!-- Audio Player for uploaded music -->
+        <div ng-repeat="mediaItem in vm.data.music.media | filter:{mediaType:'audio'}">
+            <audio controls style="width: 100%; margin-bottom: 15px;">
+                <source ng-src="{{ mediaItem.trustedUrl }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        <p style="white-space: pre-wrap;">{{ vm.data.music.body }}</p>
+        
+        <hr ng-if="vm.data.music.reviews.length > 0">
+        <h4 ng-if="vm.data.music.reviews.length > 0">Reviews</h4>
+        <div class="well" ng-repeat="review in vm.data.music.reviews">
+            <star-rating rating-value="review.rating"></star-rating>
+            <p>{{ review.reviewText }}</p>
+            <small><em>by {{ review.author.name || 'Anonymous' }} on {{ review.createdAt | date:'medium' }}</em></small>
+        </div>
+
+        <div class="well">
+            <a href="/review/add/content/{{ vm.musicId }}" class="btn btn-success" tooltip title="Share your thoughts"><i class="glyphicon glyphicon-pencil"></i> Write a Review</a>
+            <a href="/music/{{ vm.musicId }}/edit" class="btn btn-info" ng-if="vm.isAdmin" tooltip title="Edit this music entry"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+            <button ng-click="vm.deleteMusic()" class="btn btn-danger pull-right" ng-if="vm.isAdmin" tooltip title="Permanently delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Other Music</h3>
+            </div>
+            <div class="list-group">
+                <p ng-if="!vm.sidebarMusic && vm.sidebarMessage" class="list-group-item">{{ vm.sidebarMessage }}</p>
+                <a ng-repeat="item in vm.sidebarMusic" href="/music/{{ item._id }}" class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ item.title }}</h4>
+                    <p class="list-group-item-text"> by {{ item.artist }} </p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

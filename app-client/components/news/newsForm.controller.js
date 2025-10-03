@@ -1,56 +1,59 @@
-// app-client/components/news/newsForm.controller.js
 (function () {
     'use strict';
 
-    function newsFormCtrl($routeParams, $location, reviewsNewsData) {
+    function newsFormCtrl($routeParams, $location, reviewsNewsData, mediaData) {
         var vm = this;
-        vm.newsid = $routeParams.newsid;
-        vm.isEdit = !!vm.newsid;
-        vm.message = "";
-        vm.pageHeader = { 
-            title: vm.isEdit ? 'Edit News Article' : 'Create New News Article' 
+        vm.newsId = $routeParams.newsId;
+        vm.isEdit = !!vm.newsId;
+
+        vm.pageHeader = {
+            title: vm.isEdit ? 'Edit News Article' : 'Add New News Article'
         };
-        vm.article = {};
+
+        vm.formData = {};
 
         if (vm.isEdit) {
-            // GET /api/news/:id
-            reviewsNewsData.getNewsById(vm.newsid)
+            reviewsNewsData.getNewsById(vm.newsId)
                 .then(function (response) {
-                    vm.article = response.data;
+                    vm.formData = response.data;
                 })
-                .catch(function (error) {
-                    vm.message = "Error loading article for editing.";
-                    console.error(error);
+                .catch(function (err) {
+                    vm.formError = "Error loading news data. " + err.message;
                 });
         }
-        
-        vm.saveNews = function () {
-            if (!vm.article.title || !vm.article.body) {
-                vm.message = "Title and content are required.";
-                return;
-            }
 
-            const payload = {
-                title: vm.article.title,
-                body: vm.article.body,
-                // contentType is set in backend as 'news'
+        vm.onSubmit = function (form) {
+            vm.formError = "";
+            if (form.$invalid) { return; }
+
+            const saveNews = function(newsData) {
+                const action = vm.isEdit ?
+                    reviewsNewsData.updateNews(vm.newsId, newsData) :
+                    reviewsNewsData.addNews(newsData);
+
+                action.then(function (response) {
+                    $location.path('/news/' + (vm.newsId || response.data._id));
+                }).catch(function (err) {
+                    vm.formError = "Your entry could not be saved. " + (err.data.message || '');
+                });
             };
 
-            const savePromise = vm.isEdit 
-                ? reviewsNewsData.updateNews(vm.newsid, payload) // PUT /api/news/:id
-                : reviewsNewsData.addNews(payload); // POST /api/news
-
-            savePromise
-                .then(function () {
-                    $location.path('/news');
-                })
-                .catch(function (error) {
-                    vm.message = error.data && error.data.message || "Error saving news article.";
-                    console.error(error);
-                });
+            if (vm.imageFile) {
+                vm.formError = "Uploading image...";
+                mediaData.uploadFile(vm.imageFile, 'image')
+                    .then(function(response) {
+                        // Replace existing media with the new image
+                        vm.formData.media = [response.data];
+                        saveNews(vm.formData);
+                    }).catch(function(err) {
+                        vm.formError = "Image upload failed. " + (err.data.message || 'Please try again.');
+                    });
+            } else {
+                saveNews(vm.formData);
+            }
         };
     }
 
     angular.module('musicProjectApp').controller('newsFormCtrl', newsFormCtrl);
-    newsFormCtrl.$inject = ['$routeParams', '$location', 'reviewsNewsData'];
+    newsFormCtrl.$inject = ['$routeParams', '$location', 'reviewsNewsData', 'mediaData'];
 })();

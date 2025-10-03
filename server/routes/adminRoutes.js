@@ -2,10 +2,8 @@
 const router = require('express').Router();
 const { requireAuth } = require('../middlewares/authMiddleware');
 const { requireRole } = require('../middlewares/roleMiddleware');
+const adminCtrl = require('../controllers/adminController');
 
-// Example placeholder
-router.get('/stats', requireAuth, requireRole('admin'), async (req, res) => {
-  res.json({ users: 0, content: 0, reviews: 0 });
-});
+router.get('/stats', requireAuth, requireRole('admin'), adminCtrl.getStats);
 
 module.exports = router;

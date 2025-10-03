@@ -1,30 +1,48 @@
 // app-client/components/shared/navigation.controller.js
 // app-client/components/shared/navigation.controller.js
 (function () {
-    'use strict';
+  'use strict';
+  function navigationCtrl($location, authService, searchService, $timeout) {
+    var vm = this;
+    vm.isLoggedIn = function() {
+      return authService.isAuthenticated();
+    };
+    vm.isAdmin = authService.isAdmin; // This can remain a direct reference
 
-    function navigationCtrl(authService, $location) {
-        var vm = this;
+    vm.currentUsername = function() {
+      const user = authService.getUser();
+      return user ? user.name : 'Profile';
+    };
 
-        vm.isLoggedIn = function () {
-            return authService.isAuthenticated();
-        };
+    vm.logout = function () {
+      authService.logout();
+      $location.path('/login');
+    };
 
-        vm.isAdmin = function () {
-            return authService.isAdmin();
-        };
+    // --- Global Search ---
+    vm.searchQuery = '';
+    vm.searchResults = null;
 
-        vm.currentUsername = function () {
-            var payload = authService.parseToken();
-            return payload && payload.user && payload.user.email ? payload.user.email : 'Profile';
-        };
+    vm.onSearchChange = function() {
+      if (!vm.searchQuery || vm.searchQuery.length < 2) {
+        vm.searchResults = null;
+        return;
+      }
+      vm.searchResults = 'searching'; // Show loading state
+      searchService.search(vm.searchQuery)
+        .then(function(response) {
+          vm.searchResults = response.data;
+        });
+    };
 
-        vm.logout = function () {
-            authService.logout();
-            $location.path('/login');
-        };
-    }
-
-    angular.module('musicProjectApp').controller('navigationCtrl', navigationCtrl);
-    navigationCtrl.$inject = ['authService', '$location'];
+    vm.clearSearch = function() {
+      // Use a small timeout. This allows the browser to follow the link's href
+      // before the dropdown is removed from the DOM by Angular.
+      $timeout(function() {
+        vm.searchQuery = '';
+        vm.searchResults = null;
+      }, 150); // A 150ms delay is sufficient for the click to register.
+    };
+  }
+  angular.module('musicProjectApp').controller('navigationCtrl', navigationCtrl).$inject = ['$location', 'authService', 'searchService', '$timeout'];
 })();

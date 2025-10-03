@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h1 class="page-header">{{ vm.pageHeader.title }}</h1>
+        <div ng-if="vm.message" class="alert alert-danger">{{ vm.message }}</div>
+    </div>
+</div>
+
+<div class="row" ng-if="vm.profileData._id">
+    <!-- Left Column: Profile Card -->
+    <div class="col-md-4" ng-if="vm.profileData.profilePicture">
+        <div class="panel panel-default">
+            <div class="panel-body text-center" ng-if="vm.profileData.profilePicture">
+                <img ng-src="{{ vm.profileData.profilePicture || '/images/default-profile.png' }}" class="img-responsive img-circle" style="width: 150px; height: 150px; margin: 0 auto 20px; object-fit: cover;">
+                <h3>{{ vm.profileData.name }}</h3>
+                <p class="text-muted">{{ vm.profileData.email }}</p>
+                <hr>
+                <p>{{ vm.profileData.bio || 'No bio provided.' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Details & Settings -->
+    <div ng-class="{'col-md-8': vm.profileData.profilePicture, 'col-md-12': !vm.profileData.profilePicture}">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-tabs" role="tablist" style="border-bottom-width: 2px; border-bottom-color: #EAEAEA;">
+                    <li role="presentation" class="active"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a></li>
+                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+                </ul>
+
+                <!-- Tab Panes -->
+                <div class="tab-content" style="padding-top: 20px;">
+                    <!-- About Tab -->
+                    <div role="tabpanel" class="tab-pane fade in active" id="about">
+                        <dl class="dl-horizontal">
+                            <dt>Gender</dt>
+                            <dd>{{ vm.profileData.gender || 'Not specified' }}</dd>
+                            <dt>Pronouns</dt>
+                            <dd>{{ vm.profileData.pronouns || 'Not specified' }}</dd>
+                            <dt>Address</dt>
+                            <dd>{{ vm.profileData.address || 'Not specified' }}</dd>
+                            <dt>Interests</dt>
+                            <dd>{{ (vm.profileData.interests && vm.profileData.interests.join(', ')) || 'None listed' }}</dd>
+                            <dt>Hobbies</dt>
+                            <dd>{{ (vm.profileData.hobbies && vm.profileData.hobbies.join(', ')) || 'None listed' }}</dd>
+                        </dl>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div role="tabpanel" class="tab-pane fade" id="settings">
+                        <form name="profileForm" ng-submit="vm.onSubmit(profileForm)" novalidate>
+                            <div ng-if="vm.formError" class="alert alert-danger">{{ vm.formError }}</div>
+
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" ng-model="vm.profileData.name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profilePicture">Profile Picture</label>
+                                <input type="file" id="profilePicture" file-model="vm.profilePictureFile" accept="image/*">
+                                <p class="help-block">Upload a new picture to replace the current one.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3" ng-model="vm.profileData.bio"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select class="form-control" id="gender" name="gender" ng-model="vm.profileData.gender">
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="pronouns">Pronouns</label>
+                                        <input type="text" class="form-control" id="pronouns" name="pronouns" ng-model="vm.profileData.pronouns">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" ng-model="vm.profileData.address">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="interests">Interests</label>
+                                <input type="text" class="form-control" id="interests" name="interests" ng-model="vm.profileData.interestsStr" placeholder="e.g., Rock, Jazz, EDM">
+                                <p class="help-block">Separate with commas.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hobbies">Hobbies</label>
+                                <input type="text" class="form-control" id="hobbies" name="hobbies" ng-model="vm.profileData.hobbiesStr" placeholder="e.g., Guitar, DJing, Concerts">
+                                <p class="help-block">Separate with commas.</p>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" ng-disabled="profileForm.$invalid">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

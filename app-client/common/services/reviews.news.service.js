@@ -2,35 +2,21 @@
 (function () {
     'use strict';
 
-    function reviewsNewsData($http) {
-        const apiReviews = '/api/reviews';
-        const apiNews = '/api/news';
+    function reviewsNewsData($http, API_BASE) {
+        const apiReviews = `${API_BASE}/reviews`;
+        const apiNews = `${API_BASE}/news`;
+        const apiMusic = `${API_BASE}/music`;
 
         // --- Reviews (/api/reviews) ---
 
-        // GET /api/reviews
-        this.getReviewsList = function () {
-            return $http.get(apiReviews);
+        // POST /api/reviews/content/:contentId
+        this.addReviewToContent = function (contentId, reviewData) {
+            return $http.post(`${apiReviews}/content/${contentId}`, reviewData);
         };
-        
-        // POST /api/reviews (Auth required) - Creates a new review
-        this.addReview = function (reviewData) {
-            return $http.post(apiReviews, reviewData);
-        };
-
-        // GET /api/reviews/:id (Not in backend routes, but necessary for edit form)
-        this.getReviewById = function (reviewid) {
-            return $http.get(apiReviews + '/' + reviewid); 
-        };
-        
-        // PUT /api/reviews/:id (Auth required)
-        this.updateReview = function (reviewid, data) {
-            return $http.put(apiReviews + '/' + reviewid, data);
-        };
-
-        // DELETE /api/reviews/:id (Auth required)
-        this.deleteReview = function (reviewid) {
-            return $http.delete(apiReviews + '/' + reviewid);
+ 
+        // POST /api/reviews/festivals/:festivalId
+        this.addReviewToFestival = function (festivalId, reviewData) {
+            return $http.post(`${apiReviews}/festivals/${festivalId}`, reviewData);
         };
 
         // --- News (/api/news) ---
@@ -42,7 +28,7 @@
 
         // GET /api/news/:id
         this.getNewsById = function (newsid) {
-            return $http.get(apiNews + '/' + newsid);
+            return $http.get(`${apiNews}/${newsid}`);
         };
         
         // POST /api/news (Admin protected)
@@ -52,15 +38,38 @@
         
         // PUT /api/news/:id (Admin protected)
         this.updateNews = function (newsid, data) {
-            return $http.put(apiNews + '/' + newsid, data);
+            return $http.put(`${apiNews}/${newsid}`, data);
         };
 
         // DELETE /api/news/:id (Admin protected)
         this.deleteNews = function (newsid) {
-            return $http.delete(apiNews + '/' + newsid);
+            return $http.delete(`${apiNews}/${newsid}`);
         };
+
+        // --- Music (/api/music) ---
+
+        this.getMusicList = function () {
+            return $http.get(apiMusic);
+        };
+
+        this.getMusicById = function (musicId) {
+            return $http.get(`${apiMusic}/${musicId}`);
+        };
+
+        this.addMusic = function (data) {
+            return $http.post(apiMusic, data);
+        };
+
+        this.updateMusic = function (musicId, data) {
+            return $http.put(`${apiMusic}/${musicId}`, data);
+        };
+
+        this.deleteMusic = function (musicId) {
+            return $http.delete(`${apiMusic}/${musicId}`);
+        };
+
     }
 
     angular.module('musicProjectApp').service('reviewsNewsData', reviewsNewsData);
-    reviewsNewsData.$inject = ['$http'];
+    reviewsNewsData.$inject = ['$http', 'API_BASE'];
 })();
